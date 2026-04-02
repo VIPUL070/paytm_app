@@ -2,13 +2,12 @@ const { Router } = require("express");
 const router = Router();
 const jwt = require("jsonwebtoken");
 const zod = require("zod");
-const User = require("../db");
+const {User,Account} = require("../db");
 const { JWT_SECRET } = require("../config");
 const authMiddleware = require("../middleware");
-const Account = require('../db')
 
 const signupSchema = zod.object({
-  username: zod.string(),
+  username: zod.string().email(),
   password: zod.string(),
   firstName: zod.string(),
   lastName: zod.string(),
@@ -28,14 +27,14 @@ router.post("/signup", async (req, res) => {
     username: body.username,
   });
 
-  if (user._id) {
+  if (user) {
     return res.json({
       message: "Email already taken / Incorrect inputs",
     });
   }
 
   const dbUser = await User.create(body);
-  const userId = user._id
+  const userId = dbUser._id
 
   await Account.create({
     userId,
@@ -94,14 +93,14 @@ const updatedData = zod.object({
 
 router.put("/", authMiddleware, async (req, res) => {
   const body = req.body;
-  const response = body.safeParse(body);
+  const response = updatedData.safeParse(body);
   if (!response.success) {
     return res.status(411).json({
       message: "Error while updating information",
     });
   }
 
-  await User.updateOne(req.body, { id: req.userId });
+  await User.updateOne({ _id: req.userId }, req.body);
 
   res.status(200).json({
     message: "Updated successfully",
