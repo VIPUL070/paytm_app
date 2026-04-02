@@ -38,7 +38,7 @@ const SignUp = () => {
           </div>
           <BottomWarning
             label={"Already have an account?"}
-            buttonText={"Sign up"}
+            buttonText={"Sign In"}
             to={"/signin"}
           ></BottomWarning>
         </div>

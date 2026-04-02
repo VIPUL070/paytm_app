@@ -6,9 +6,9 @@ function Dashboard() {
 
   return (
     <div>
-      <AppBar label = {(first)}></AppBar>
+      <AppBar label = ""></AppBar>
       <div className="m-8">
-        <Balance value={(amount)}></Balance>
+        <Balance value=""></Balance>
         <Users></Users>
       </div>
     </div>
