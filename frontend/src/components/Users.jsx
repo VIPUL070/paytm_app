@@ -1,10 +1,33 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-key */
 /* eslint-disable no-unused-vars */
+import { useEffect, useState } from "react";
 import { Button } from "./Button";
 import { useNavigate } from 'react-router-dom';
 
 export const Users = () => {
+  const [users, setUsers] = useState([]);
+  const [filter , setFilter] = useState("");
+
+useEffect(() => {
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/v1/user/bulk?filter=" + filter);
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch");
+      }
+
+      const data = await res.json();
+      setUsers(data.user);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchUsers();
+}, [filter]);
+
   return (
     <>
       <div className="font-bold mt-6 text-lg">Users</div>
@@ -12,11 +35,12 @@ export const Users = () => {
         <input
           type="text"
           placeholder="Serach users...."
+          onChange={(e) => { setFilter(e.target.value)}}
           className="w-full px-2 py-1 border rounded border-slate-200 "
         />
       </div>
       <div className="mt-2">
-        
+        {users.map(user => <User user={user} key={user.username}/>)}
       </div>
     </>
   );
@@ -24,7 +48,7 @@ export const Users = () => {
 
 // eslint-disable-next-line react/prop-types
 function User({ user }) {
-
+   
   const navigate = useNavigate();
 
   return (
