@@ -1,5 +1,13 @@
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+
 /* eslint-disable react/no-unescaped-entities */
 function SendMoney() {
+  const [searchParams] = useSearchParams();
+  const [amount , setAmount] = useState('')
+  const name = searchParams.get('name');
+  const id = searchParams.get('id');
+
   return (
     <div className="flex justify-center h-screen bg-gray-100">
       <div className="h-full flex flex-col justify-center">
@@ -12,7 +20,7 @@ function SendMoney() {
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
                 <span className="text-2xl text-white">
-                  {/* {name[0].toUpperCase()} */}
+                  {name[0].toUpperCase()}
                 </span>
               </div>
 
@@ -31,12 +39,24 @@ function SendMoney() {
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 id="amount"
                 placeholder="Enter amount"
-                onChange={() => {}}
+                onChange={(e) => { setAmount(e.target.value)}}
               />
 
               <button
                 className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white"
-                onClick={async () => {}}
+                onClick={async () => {
+                  await fetch('http://localhost:3000/api/v1/account/transfer' ,{
+                    method: 'POST',
+                    headers: {
+                      "Authorization": 'Bearer '+ localStorage.getItem('token'),
+                    "Content-Type": "application/json",
+                  },
+                    body: JSON.stringify({
+                      to: id,
+                      amount: Number(amount)
+                    })
+                  })
+                }}
               >
                 Initiate Transfer
               </button>
