@@ -4,9 +4,12 @@ import { InputBox } from "../components/InputBox";
 import { Button } from "../components/Button";
 import { BottomWarning } from "../components/BottomWarning";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const Signin = () => {
   const navigate = useNavigate();
+  const [username , setUsername] = useState("");
+  const [password , setPassword] = useState("");
 
   return (
     <div className="bg-slate-300 h-screen flex justify-center">
@@ -20,16 +23,37 @@ const Signin = () => {
           <InputBox
             placeholder="johnDoe@gmail.com"
             label={"username"}
-            onChange={() => {}}
+            onChange={(e) => {setUsername(e.target.value)}}
           ></InputBox>
           <InputBox
             placeholder="123456"
             label={"password"}
-            onChange={() => {}}
+            onChange={(e) => {setPassword(e.target.value)}}
           ></InputBox>
+
           <div className="pt-4">
-            <Button label={"Sign In"} onClick={async () => {}}></Button>
+            <Button label={"Sign In"} onClick={async () => {
+              const res = await fetch('http://localhost:3000/api/v1/user/signin',{
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  username,
+                  password
+                })
+              })
+               const data = await res.json();
+                if (res.ok) {
+                  localStorage.setItem("token", data.token);
+                  navigate("/dashboard");
+                } else {
+                  alert(data.message || "Signup failed");
+                }
+            }}>
+            </Button>
           </div>
+
           <BottomWarning
             label={"Don't have an account?"}
             buttonText={"Sign up"}
