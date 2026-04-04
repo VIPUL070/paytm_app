@@ -4,12 +4,14 @@ import { InputBox } from "../components/InputBox";
 import { Button } from "../components/Button";
 import { BottomWarning } from "../components/BottomWarning";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   return (
     <div className="bg-slate-300 h-screen flex justify-center">
@@ -51,21 +53,29 @@ const SignUp = () => {
           <div className="pt-4">
             <Button
               onClick={async () => {
-                const response = await fetch("http://localhost:3000/api/v1/user/signup", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                   body: JSON.stringify({
-                    username,
-                    password,
-                    firstName,
-                    lastName,
-                  }),
-                });
+                const response = await fetch(
+                  "http://localhost:3000/api/v1/user/signup",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      username,
+                      password,
+                      firstName,
+                      lastName,
+                    }),
+                  }
+                );
                 //after sign up we have to store token in the local storage (key-val pair)
                 const data = await response.json();
-                localStorage.setItem("token" ,data.token)
+                if (response.ok) {
+                  localStorage.setItem("token", data.token);
+                  navigate("/dashboard");
+                } else {
+                  alert(data.message || "Signup failed");
+                }
               }}
               label={"Sign Up"}
             ></Button>

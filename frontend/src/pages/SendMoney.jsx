@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 /* eslint-disable react/no-unescaped-entities */
 function SendMoney() {
@@ -7,6 +7,7 @@ function SendMoney() {
   const [amount , setAmount] = useState('')
   const name = searchParams.get('name');
   const id = searchParams.get('id');
+  const navigate = useNavigate();
 
   return (
     <div className="flex justify-center h-screen bg-gray-100">
@@ -56,6 +57,7 @@ function SendMoney() {
                       amount: Number(amount)
                     })
                   })
+                  navigate('/dashboard');
                 }}
               >
                 Initiate Transfer
